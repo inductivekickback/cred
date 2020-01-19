@@ -13,7 +13,7 @@ These disbenefits are fine during development but ideally a production server wo
 
 This two-step process allows all devices to run the same application hex file and uses Python to do the heavy lifting instead of requiring a full toolchain with a compiler. The extra step to write the credentials should only add tens of seconds to the overall programming process.
 ### Requirements
-The intelhex module is used for working with the hex files and the excellent pynrfjprog is used to program the SoC. Requirements can be installed from the command line using pip:
+The **intelhex** module is used for working with the hex files and the excellent **pynrfjprog** is used to program the SoC. Requirements can be installed from the command line using pip:
 ```
 $ cd cred
 $ pip3 install --user -r requirements.txt
