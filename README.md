@@ -39,6 +39,7 @@ If PEM or CRT files are required then they are specified by file path instead of
 $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE -o multi_cred.hex
 $ python3 cred.py --sec_tag 3456 -i multi_cred.hex --CA_cert_path ca_file.crt
 ```
+The prebuilt hex file can be modifed and compiled by placing it in the "ncs/nrf/samples/nrf9160" directory and building it as usual.
 ### Limitations
 The prebuilt hex file doesn't currently write a result code to the SoC's flash and as a consequence the command line interface can't verify that the credentials have been successfully written.
 
