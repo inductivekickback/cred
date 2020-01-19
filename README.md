@@ -13,7 +13,7 @@ This project consists of two components:
 1. A prebuilt firmware hex file (that can be compiled using the [nRF Connect SDK](http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html)) and is responsible for writing a list of credentials to the modem side.
 1. A Python command line interface that adds credentials to the prebuilt hex file, programs it to the device, allows it to run, and then erases it.
 
-This two-step process allows all devices to run the same application hex file and uses Python to do the heavy lifting instead of requiring a full toolchain with a compiler. The extra step to write the credentials should only add tens of seconds to the overall programming process.
+This two-step process allows all devices to run the same application hex file and uses Python to do the heavy lifting instead of requiring a full toolchain with a compiler. The extra step to write the credentials should only add on the order of tens of seconds to the overall programming process.
 ### Requirements
 The **intelhex** module is used for working with the hex files and the excellent **pynrfjprog** is used to program the SoC. Requirements can be installed from the command line using pip:
 ```
