@@ -7,7 +7,9 @@ There are several reasons why compiling TLS credentials into production firmware
 * Key material that is part of the application doesn't benefit from all of the extra security that is provided by the modem core
 * Compiling credentials into application hex files requires generating unique application hex files for every device 
 
-These disbenefits are fine during development but ideally a production server would require only the current version of the application firmware, credentials to use for the SoC, and an SWD interface for programming. This project consists of two components:
+These disbenefits are fine during development but ideally a production server would require only the current version of the application firmware, credentials to use for the SoC, and an SWD interface for programming.
+
+This project consists of two components:
 1. A prebuilt firmware hex file (that can be compiled using the [nRF Connect SDK](http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html)) and is responsible for writing a list of credentials to the modem side.
 1. A Python command line interface that adds credentials to the prebuilt hex file, programs it to the device, allows it to run, and then erases it.
 
