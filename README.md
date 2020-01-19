@@ -40,4 +40,6 @@ $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE 
 $ python3 cred.py --sec_tag 3456 -i multi_cred.hex --CA_cert_path sample.yaml
 ```
 ### Limitations
-The ability to write to a file and then read from that file to add to it on the next invocation is half-baked because credentials are not parsed and verified when using an in file.
+The prebuilt hex file doesn't currently write a result code to the SoC's flash and as a consequence the command line interface can't verify that the credentials have been successfully written.
+
+Also the ability to add credentials to a file and then read from that file to add additional credentials on the next invocation is half-baked because credentials are not parsed and verified.
