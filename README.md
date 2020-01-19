@@ -37,7 +37,7 @@ $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE
 If PEM or CRT files are required then they are specified by file path instead of pasted onto the command line. If more than one sec_tag is required then they can be added by writing the first hex file to a file and then using that file as an input on successive iterations:
 ```
 $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE -o multi_cred.hex
-$ python3 cred.py --sec_tag 3456 -i multi_cred.hex --CA_cert_path sample.yaml
+$ python3 cred.py --sec_tag 3456 -i multi_cred.hex --CA_cert_path ca_file.crt
 ```
 ### Limitations
 The prebuilt hex file doesn't currently write a result code to the SoC's flash and as a consequence the command line interface can't verify that the credentials have been successfully written.
