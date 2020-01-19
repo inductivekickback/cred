@@ -21,14 +21,39 @@ $ pip3 install --user -r requirements.txt
 ### Usage
 The command line interface can be modified to add additional capabilties. The existing functionality is pretty comprehensive:
 ```
-$ python3 cred.py 
+$ python3 cred.py --help
 usage: cred [-h] [-i PATH_TO_IN_FILE] [-o PATH_TO_OUT_FILE]
             [-d FW_EXECUTE_DELAY] [-s JLINK_SERIAL_NUMBER] [--sec_tag SEC_TAG]
             [--psk PRESHARED_KEY] [--psk_ident PRESHARED_KEY_IDENTITY]
             [--CA_cert_path CA_CERT_PATH]
             [--client_cert_path CLIENT_CERT_PATH]
             [--client_private_key_path CLIENT_PRIVATE_KEY_PATH]
-error: sec_tag is required
+
+A command line interface for managing nRF91 credentials via SWD.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i PATH_TO_IN_FILE, --in_file PATH_TO_IN_FILE
+                        read existing hex file instead of generating a new one
+  -o PATH_TO_OUT_FILE, --out_file PATH_TO_OUT_FILE
+                        write output from read operation to file instead of
+                        programming it
+  -d FW_EXECUTE_DELAY, --fw_delay FW_EXECUTE_DELAY
+                        delay in seconds to allow firmware on nRF91 to execute
+  -s JLINK_SERIAL_NUMBER, --serial_number JLINK_SERIAL_NUMBER
+                        serial number of J-Link
+  --sec_tag SEC_TAG     sec_tag to use for credential
+  --psk PRESHARED_KEY   add a preshared key (PSK) as a string
+  --psk_ident PRESHARED_KEY_IDENTITY
+                        add a preshared key (PSK) identity as a string
+  --CA_cert_path CA_CERT_PATH
+                        path to a root Certificate Authority certificate
+  --client_cert_path CLIENT_CERT_PATH
+                        path to a client certificate
+  --client_private_key_path CLIENT_PRIVATE_KEY_PATH
+                        path to a client private key
+
+WARNING: nrf_cloud relies on credentials with sec_tag 16842753.
 ```
 A single set of credentials that use the same sec_tag can be written in a single step:
 ```
