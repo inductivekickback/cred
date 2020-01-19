@@ -2,7 +2,7 @@ Nordic's nRF91 series has a mechanism for storing TLS credentials securely on th
 ### About
 There are several reasons why compiling TLS credentials into production firmware is not a good idea:
 * The application must copy the credentials to the modem side of the SoC so they end up occupying space on both cores
-* Plus this means that the application has to contain extra code to perform the copying
+  * This also means that the application has to contain extra code to perform the copying
 * Credentials such as root CA certificates can approach 4KB in length
 * Key material that is part of the application doesn't benefit from all of the extra security that is provided by the modem core
 * Compiling credentials into application hex files requires generating unique application hex files for every device 
