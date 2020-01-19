@@ -15,7 +15,7 @@ This two-step process allows all devices to run the same application hex file an
 ### Requirements
 The intelhex module is used for working with the prebuilt hex file and the excellent pynrfjprog is used to program the SoC. Requirements can be installed from the command line using pip:
 ```
-$ cd at
+$ cd cred
 $ pip3 install --user -r requirements.txt
 ```
 ### Usage
