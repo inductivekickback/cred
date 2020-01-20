@@ -1,4 +1,4 @@
-Nordic's nRF91 series has a mechanism for storing TLS credentials securely on the "modem side" of the SoC. The purpose of this project is to provide a proof-of-concept process for writing these credentials efficiently -- using only the SWD interface and without invoking a compiler.
+Nordic's nRF91 series has a mechanism for storing [TLS credentials](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fref_at_commands%2FREF%2Fat_commands%2Fmob_termination_ctrl_status%2Fcmng_set.html) securely on the "modem side" of the SoC. The purpose of this project is to provide a proof-of-concept process for writing these credentials efficiently -- using only the SWD interface and without invoking a compiler.
 ### About
 There are several reasons why compiling TLS credentials into production firmware is not a good idea:
 * The application must copy the credentials to the modem side of the SoC so they end up occupying space on both cores
