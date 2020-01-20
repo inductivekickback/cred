@@ -68,6 +68,4 @@ $ python3 cred.py --sec_tag 3456 -i multi_cred.hex --CA_cert_path ca_file.crt
 ```
 The prebuilt hex file can be modifed and compiled by moving this repo to the "ncs/nrf/samples/nrf9160" directory and building it as usual.
 ### Limitations
-The prebuilt hex file doesn't currently write a result code to the SoC's flash and as a consequence the command line interface can't verify that the credentials have been successfully written.
-
-Also the ability to add credentials to a file and then read from that file to add additional credentials on the next invocation is half-baked because credentials are not parsed and verified.
+The ability to add credentials to a file and then read from that file to add additional credentials on the next invocation is half-baked because credentials are not parsed and verified.
