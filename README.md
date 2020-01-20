@@ -11,7 +11,7 @@ These disbenefits are fine during development but ideally a production server wo
 
 This project consists of two components:
 1. A prebuilt firmware hex file (that can be compiled using the [nRF Connect SDK](http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html)) that is responsible for writing a list of credentials to the modem side.
-1. A Python command line interface that adds credentials to the prebuilt hex file, programs it to the device, allows it to run, and then erases it.
+1. A Python command line interface that adds credentials to the prebuilt hex file, programs it to the device, allows it to run, verifies that it completed successfully, and then erases it.
 
 This two-step process allows all devices to run the same application hex file and uses Python to do the heavy lifting instead of requiring a full toolchain with a compiler. The extra step to write the credentials should only add on the order of tens of seconds to the overall programming process.
 ### Requirements
@@ -66,6 +66,8 @@ If PEM or CRT files are required then they are specified by file path instead of
 $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE -o multi_cred.hex
 $ python3 cred.py --sec_tag 3456 -i multi_cred.hex --CA_cert_path ca_file.crt
 ```
+The Python program waits five seconds after programming the hex file to allow it to process the credentials and then write a result code to a fixed location in the nRF91's flash memory. This result code is then read to verify that hex file had time to complete its task. If the defaul delay is not long enough then a longer value can be specified via the **--fw_delay** argument.
+
 The prebuilt hex file can be modifed and compiled by moving this repo to the "ncs/nrf/samples/nrf9160" directory and building it as usual.
 ### Limitations
 The ability to add credentials to a file and then read from that file to add additional credentials on the next invocation is half-baked because credentials are not parsed and verified.
