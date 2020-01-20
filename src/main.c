@@ -87,36 +87,10 @@ static int query_modem(const char *cmd, char *buf, size_t buf_len)
 
 static void write_fw_result(int result)
 {
-    printk("TODO: Write fw_result %d.\n", result);
-    /*
-    printk("Set NVMC_CONFIG_WEN\n");
-    NRF_NVMC->CONFIGNS = NVMC_CONFIG_WEN_Wen;
-    __DSB();
-    __ISB();
-
-    while (NRF_NVMC->READY == NVMC_READY_READY_Busy)
-    {
-    }
-
-    printk("Write the value.\n");
-    *(volatile uint32_t*)FW_RESULT_CODE_ADDR = result;
-
-    while (NRF_NVMC->READY == NVMC_READY_READY_Busy)
-    {
-    }
-
-    printk("Disable WEN.\n");
-    NRF_NVMC->CONFIGNS = NVMC_CONFIG_WEN_Ren;
-    __DSB();
-    __ISB();
-    */
-
-    /*
     nrfx_nvmc_word_write(FW_RESULT_CODE_ADDR, result);
     while (!nrfx_nvmc_write_done_check())
     {
     }
-    */
 }
 
 static int parse_and_write_credential(uint32_t * addr)
@@ -182,7 +156,7 @@ void main(void)
     int  ret;
     u8_t result_buf[32];
 
-    printk("cred started");
+    printk("cred started\n");
 
     /* Power off the modem. */
     ret = query_modem("AT+CFUN=0", result_buf, sizeof(result_buf));
