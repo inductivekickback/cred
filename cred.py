@@ -24,7 +24,7 @@ from intelhex import IntelHex
 from pynrfjprog import HighLevel
 
 
-DEFAULT_CRED_WRITE_TIME_S = 5
+DEFAULT_CRED_WRITE_TIME_S = 7
 
 HEX_PATH = os.path.sep.join(("build", "zephyr", "merged.hex"))
 TMP_FILE_NAME = "cred_hex.hex"
