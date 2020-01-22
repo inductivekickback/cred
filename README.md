@@ -57,7 +57,7 @@ optional arguments:
 
 WARNING: nrf_cloud relies on credentials with sec_tag 16842753.
 ```
-A single set of credentials that use the same sec_tag can be written to the SoC in a single step:
+A set of credentials that use the same sec_tag can be written to the SoC in a single step:
 ```
 $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE
 ```
