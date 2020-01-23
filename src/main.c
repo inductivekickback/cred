@@ -210,7 +210,7 @@ void main(void)
     }
     else
     {
-        printk("OK: IMEI written successfully.\n");
+        printk("IMEI written successfully.\n");
     }
 
     if (write_credentials())
