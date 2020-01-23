@@ -66,7 +66,7 @@ If PEM or CRT files are required then they are specified by file path instead of
 $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE -o multi_cred.hex
 $ python3 cred.py --sec_tag 3456 -i multi_cred.hex --CA_cert_path ca_file.crt
 ```
-The Python program waits five seconds after programming the hex file to allow it to process the credentials and then write a result code to a fixed location in the nRF91's flash memory. This result code is then read to verify that hex file had time to complete its task. If the defaul delay is not long enough then a longer value can be specified via the **--fw_delay** argument.
+The Python program waits seven seconds after programming the hex file to allow it to process the credentials and then write a result code to a fixed location in the nRF91's flash memory. This result code is then read to verify that hex file had time to complete its task. If the default delay is not long enough then a longer value can be specified via the **--fw_delay** argument.
 
 The prebuilt hex file can be modifed and compiled by moving this repo to the "ncs/nrf/samples/nrf9160" directory and building it as usual.
 ### Limitations
