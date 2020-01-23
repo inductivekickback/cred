@@ -16,10 +16,11 @@
  *
  *  [MAGIC_NUMBER (0xCA5CAD1A)]
  *  [int32_t fw_result_code]
- *  [uint8_t num_credentials]
- *  [uint32_t nrf_sec_tag_t][uint8_t nrf_key_mgnt_cred_type_t][uin16_t len][uint8_t[] credential]
+ *  [char[] IMEI]
+ *  [u8_t num_credentials]
+ *  [u32_t nrf_sec_tag_t][u8_t nrf_key_mgnt_cred_type_t][u16_t len][char[] credential]
  *  ...
- *  [uint32_t nrf_sec_tag_t][uint8_t nrf_key_mgnt_cred_type_t][uin16_t len][uint8_t[] credential]
+ *  [u32_t nrf_sec_tag_t][u8_t nrf_key_mgnt_cred_type_t][u16_t len][char[] credential]
  */
 
 #include <zephyr.h>
@@ -34,16 +35,19 @@
 
 #define CRED_PAGE_ADDR      0x2B000
 #define FW_RESULT_CODE_ADDR (CRED_PAGE_ADDR + 4)
-#define CRED_COUNT_ADDR     (FW_RESULT_CODE_ADDR + 4)
+#define IMEI_ADDR           (FW_RESULT_CODE_ADDR + 4)
+#define CRED_COUNT_ADDR     (IMEI_ADDR + 16)
 #define FIRST_CRED_ADDR     (CRED_COUNT_ADDR + 1)
 
 #define MAGIC_NUMBER        0xCA5CAD1A
 #define ERROR_CRED_COUNT    0xFF
 #define BLANK_FW_RESULT     0xFFFFFFFF
 
+#define IMEI_LEN            15
+
 
 /**@brief Recoverable BSD library error. */
-void bsd_recoverable_error_handler(uint32_t err)
+void bsd_recoverable_error_handler(u32_t err)
 {
     printk("bsdlib recoverable error: %u\n", err);
 }
@@ -93,20 +97,38 @@ static void write_fw_result(int result)
     }
 }
 
-static int parse_and_write_credential(uint32_t * addr)
+static bool write_imei(char *buf)
+{
+    for (int i=0; i < IMEI_LEN; i++)
+    {
+        if (!nrfx_nvmc_byte_writable_check(IMEI_ADDR + i, buf[i]))
+        {
+            return false;
+        }
+    }
+
+    nrfx_nvmc_bytes_write(IMEI_ADDR, buf, IMEI_LEN);
+    while (!nrfx_nvmc_write_done_check())
+    {
+    }
+
+    return true;
+}
+
+static int parse_and_write_credential(u32_t * addr)
 {
     int ret;
 
-    nrf_sec_tag_t sec_tag = *(uint32_t*)*addr;
+    nrf_sec_tag_t sec_tag = *(u32_t*)*addr;
     *addr += sizeof(nrf_sec_tag_t);
 
-    nrf_key_mgnt_cred_type_t cred_type = *(uint8_t*)*addr;
+    nrf_key_mgnt_cred_type_t cred_type = *(u8_t*)*addr;
     *addr += sizeof(nrf_key_mgnt_cred_type_t);
 
-    uint16_t len = *(uint16_t*)*addr;
-    *addr += sizeof(uint16_t);
+    u16_t len = *(u16_t*)*addr;
+    *addr += sizeof(u16_t);
 
-    ret = nrf_inbuilt_key_write(sec_tag, cred_type, (uint8_t*)*addr, len);
+    ret = nrf_inbuilt_key_write(sec_tag, cred_type, (u8_t*)*addr, len);
 
     *addr += len;
 
@@ -124,7 +146,7 @@ static bool write_credentials(void)
     }
 
     /* Ensure that there are credentials to write. */
-    uint8_t cred_count = *(uint8_t *)CRED_COUNT_ADDR;
+    u8_t cred_count = *(u8_t *)CRED_COUNT_ADDR;
     printk("cred_count %d\n", cred_count);
     if ((0 == cred_count) || (ERROR_CRED_COUNT == cred_count))
     {
@@ -133,8 +155,8 @@ static bool write_credentials(void)
     }
 
     /* Write the credentials. */
-    uint32_t addr = FIRST_CRED_ADDR;
-    for (uint32_t i=0; i < cred_count; i++)
+    u32_t addr = FIRST_CRED_ADDR;
+    for (u32_t i=0; i < cred_count; i++)
     {
         int ret = parse_and_write_credential(&addr);
         if (ret)
@@ -163,10 +185,32 @@ void main(void)
     if (ret)
     {
         printk("ERROR: Failed to set CFUN_MODE_POWER_OFF.\n");
+        goto finish;
     }
     else
     {
         printk("Modem set to CFUN_MODE_POWER_OFF.\n");
+    }
+
+    ret = query_modem("AT+CGSN", result_buf, sizeof(result_buf));
+    if (ret)
+    {
+        printk("ERROR: Failed to read IMEI.\n");
+        goto finish;
+    }
+    else
+    {
+        printk("Modem IMEI read.\n");
+    }
+
+    if (!write_imei(result_buf))
+    {
+        printk("ERROR: IMEI not written successfully.\n");
+        goto finish;
+    }
+    else
+    {
+        printk("OK: IMEI written successfully.\n");
     }
 
     if (write_credentials())
@@ -178,6 +222,7 @@ void main(void)
         printk("ERROR: Credentials were not written successfully.\n");
     }
 
+finish:
     while(true)
     {
         /* Loop forever. */

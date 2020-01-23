@@ -5,10 +5,13 @@ The firmware component consists of a simple executable that looks for a list of 
 at a known location in flash and then programs them into the modem side of the nRF91 SoC. The
 block of credential information starts at the first flash page boundary following the firmware
 stub and consists of the following:
-[MAGIC_NUMBER (4 bytes)][FW_RESULT_CODE (4 bytes)][CRED_COUNT (1 byte)]
+[MAGIC_NUMBER (4 bytes)][FW_RESULT_CODE (4 bytes)][IMEI (16 bytes)][CRED_COUNT (1 byte)]
     [SEC_TAG (4 bytes)][CRED_TYPE (1 byte)][CRED_LEN (2 bytes)][CRED_DATA (N bytes)]
     ...
     [SEC_TAG (4 bytes)][CRED_TYPE (1 byte)][CRED_LEN (2 bytes)][CRED_DATA (N bytes)]
+
+IMEIs are only 15 chars long but the buffer is padded with an additional byte to mantain
+address alignment.
 
 NOTE: Does not parse existing credentials when reading from an in_file so there is no
       check to prevent adding duplicate credentials.
@@ -30,11 +33,15 @@ HEX_PATH = os.path.sep.join(("build", "zephyr", "merged.hex"))
 TMP_FILE_NAME = "cred_hex.hex"
 MAGIC_NUMBER_BYTES = struct.pack('I', 0xca5cad1a)
 BLANK_FW_RESULT_CODE = 0xFFFFFFFF
+BLANK_FLASH_VALUE = 0xFF
 
 CRED_PAGE_ADDR = 0x2B000
 FW_RESULT_CODE_ADDR = (CRED_PAGE_ADDR + 4)
-CRED_COUNT_ADDR = (FW_RESULT_CODE_ADDR + 4)
+IMEI_ADDR = (FW_RESULT_CODE_ADDR + 4)
+CRED_COUNT_ADDR = (IMEI_ADDR + 16)
 FIRST_CRED_ADDR = (CRED_COUNT_ADDR + 1)
+
+IMEI_LEN = 15
 
 # For more information: https://tools.ietf.org/html/rfc4279
 MAX_PSK_IDENT_LEN_BYTES = 128
@@ -228,6 +235,12 @@ def _main():
             if result_code:
                 print("error: Firmware result is 0x{:X}".format(result_code))
                 _close_and_exit(nrfjprog_api, -4)
+            imei_bytes = nrfjprog_probe.read(IMEI_ADDR, IMEI_LEN + 1)
+            if (IMEI_LEN != imei_bytes.find(BLANK_FLASH_VALUE) or
+                    not imei_bytes[:IMEI_LEN].isdigit()):
+                print("error: IMEI does not look valid.")
+                _close_and_exit(nrfjprog_api, -5)
+            print(imei_bytes[:-1].decode())
             nrfjprog_probe.erase(HighLevel.EraseAction.ERASE_ALL)
             os.remove(tmp_file)
             os.removedirs(os.path.dirname(tmp_file))
