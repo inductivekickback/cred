@@ -10,10 +10,10 @@ There are several reasons why compiling TLS credentials into production firmware
 These disbenefits are fine during development but ideally a production server would require only the current version of the application firmware, credentials to use for the SoC, and an SWD interface for programming.
 
 This project consists of two components:
-1. A prebuilt firmware hex file (compiled using the [nRF Connect SDK](http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html)) that is responsible for deactivating the modem and then writing a list of credentials to the modem side.
-1. A Python command line interface that adds credentials to the prebuilt hex file, programs it to the device, allows it to run, verifies that it completed successfully, and then erases it.
+1. A prebuilt firmware hex file (compiled using the [nRF Connect SDK](http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html)) that is responsible for deactivating the modem, writing a list of credentials to the modem side, and writing the device's IMEI and a result code to flash memory.
+1. A Python command line interface that adds credentials to the prebuilt hex file, programs it to the device, allows it to run, verifies that it completed successfully, reads the IMEI and result code from flash, and then erases it.
 
-This two-step process allows all devices to be deployed with the same application hex file and uses Python to do the heavy lifting during production (instead of requiring a full toolchain with a compiler). The extra step to write the credentials should only add on the order of tens of seconds to the overall programming process.
+This two-step process allows all devices to be deployed with the same application hex file and uses Python to do the heavy lifting during production (instead of requiring a full toolchain with a compiler). The extra step to write the credentials should only add on the order of tens of seconds to the overall programming process and provides a method for the nRF91's IMEI to be acquired.
 ### Requirements
 The **intelhex** module is used for working with the hex files and the excellent **pynrfjprog** is used to program the SoC. Requirements can be installed from the command line using pip:
 ```
@@ -60,11 +60,15 @@ WARNING: nrf_cloud relies on credentials with sec_tag 16842753.
 A set of credentials that use the same sec_tag can be written to the SoC in a single step:
 ```
 $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE
+123456789012345
 ```
+The 15-digit IMEI is read from the device and written to stdout before the Python program exits.
+
 If PEM or CRT files are required then they are specified by file path instead of pasted onto the command line. If more than one sec_tag is required then they can be added by writing the first hex file to a file and then using that file as an input on successive iterations. Here the second invocation adds to the hex file from the first and then writes to the SoC:
 ```
 $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE -o multi_cred.hex
 $ python3 cred.py --sec_tag 3456 -i multi_cred.hex --CA_cert_path ca_file.crt
+123456789012345
 ```
 The Python program waits seven seconds after programming the hex file to allow it to process the credentials and then write a result code to a fixed location in the nRF91's flash memory. This result code is then read to verify that hex file had time to complete its task. If the default delay is not long enough then a longer value can be specified via the **--fw_delay** argument.
 
