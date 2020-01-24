@@ -167,22 +167,30 @@ def _add_and_parse_args():
                         help="add a preshared key (PSK) as a string")
     parser.add_argument("--psk_ident", type=str, metavar="PRESHARED_KEY_IDENTITY",
                         help="add a preshared key (PSK) identity as a string")
-    parser.add_argument("--CA_cert_path", type=str, metavar="CA_CERT_PATH",
+    parser.add_argument("--CA_cert_path", type=str, metavar="CA_ROOT_CERT_PATH",
                         help="path to a root Certificate Authority certificate")
     parser.add_argument("--client_cert_path", type=str, metavar="CLIENT_CERT_PATH",
                         help="path to a client certificate")
     parser.add_argument("--client_private_key_path", type=str, metavar="CLIENT_PRIVATE_KEY_PATH",
                         help="path to a client private key")
+    parser.add_argument("--imei_only", action='store_true',
+                        help="only read the IMEI and exit without writing any credentials")
     args = parser.parse_args()
     if args.psk:
         if args.psk.upper().startswith("0X"):
             args.psk = args.psk[2:]
-    if args.sec_tag is None:
+    if args.sec_tag is None and not args.imei_only:
         parser.print_usage()
         print("error: sec_tag is required")
         sys.exit(-1)
-    if not (args.psk or args.psk_ident or args.CA_cert_path or args.client_cert_path or
-            args.client_private_key_path or args.client_public_key_path):
+    creds_present = (args.psk or args.psk_ident or args.CA_cert_path or
+                     args.client_cert_path or args.client_private_key_path)
+    if args.imei_only:
+        if creds_present:
+            parser.print_usage()
+            print("error: imei_only can't be used while writing credentials")
+            sys.exit(-1)
+    elif not creds_present:
         parser.print_usage()
         print("error: at least one credential is required")
         sys.exit(-1)

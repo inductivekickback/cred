@@ -147,8 +147,8 @@ static bool write_credentials(void)
 
     /* Ensure that there are credentials to write. */
     u8_t cred_count = *(u8_t *)CRED_COUNT_ADDR;
-    printk("cred_count %d\n", cred_count);
-    if ((0 == cred_count) || (ERROR_CRED_COUNT == cred_count))
+    printk("cred_count is %d.\n", cred_count);
+    if (ERROR_CRED_COUNT == cred_count)
     {
         printk("Exiting because there are no credentials to write.\n");
         return false;
