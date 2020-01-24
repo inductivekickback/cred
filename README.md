@@ -64,13 +64,13 @@ If only the IMEI is needed then no credentials have to be specified:
 $ python3 cred.py --imei_only
 123456789012345
 ```
+The 15-digit IMEI is read from the device and written to stdout before the Python program exits.
+
 A set of credentials that use the same sec_tag can be written to the SoC in a single step:
 ```
 $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE
 123456789012345
 ```
-The 15-digit IMEI is read from the device and written to stdout before the Python program exits.
-
 If PEM or CRT files are required then they are specified by file path instead of pasted onto the command line. If more than one sec_tag is required then they can be added by writing the first hex file to a file and then using that file as an input on successive iterations. Here the second invocation adds to the hex file from the first and then writes to the SoC:
 ```
 $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE -o multi_cred.hex
