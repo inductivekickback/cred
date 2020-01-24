@@ -10,7 +10,7 @@ There are several reasons why compiling TLS credentials into production firmware
 These disbenefits are fine during development but ideally a production server would require only the current version of the application firmware, credentials to use for the SoC, and an SWD interface for programming.
 
 This project consists of two components:
-1. A prebuilt firmware hex file (compiled using the [nRF Connect SDK](http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html)) that is responsible for deactivating the modem, writing a list of credentials to the modem side, and writing the device's IMEI and a result code to flash memory.
+1. A prebuilt firmware hex file (compiled using the [nRF Connect SDK](http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html)) that is responsible for deactivating the modem, writing a list of credentials to the modem side, and writing the device's IMEI along with a result code to flash memory.
 1. A Python command line interface that adds credentials to the prebuilt hex file, programs it to the device, allows it to run, verifies that it completed successfully, reads the IMEI and result code from flash, and then erases it.
 
 This two-step process allows all devices to be deployed with the same application hex file and uses Python to do the heavy lifting during production (instead of requiring a full toolchain with a compiler). The extra step to write the credentials should only add on the order of tens of seconds to the overall programming process and provides a method for the nRF91's IMEI to be acquired.
