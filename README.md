@@ -27,9 +27,9 @@ $ python3 cred.py --help
 usage: cred [-h] [-i PATH_TO_IN_FILE] [-o PATH_TO_OUT_FILE]
             [-d FW_EXECUTE_DELAY] [-s JLINK_SERIAL_NUMBER] [--sec_tag SEC_TAG]
             [--psk PRESHARED_KEY] [--psk_ident PRESHARED_KEY_IDENTITY]
-            [--CA_cert_path CA_CERT_PATH]
+            [--CA_cert_path CA_ROOT_CERT_PATH]
             [--client_cert_path CLIENT_CERT_PATH]
-            [--client_private_key_path CLIENT_PRIVATE_KEY_PATH]
+            [--client_private_key_path CLIENT_PRIVATE_KEY_PATH] [--imei_only]
 
 A command line interface for managing nRF91 credentials via SWD.
 
@@ -48,14 +48,21 @@ optional arguments:
   --psk PRESHARED_KEY   add a preshared key (PSK) as a string
   --psk_ident PRESHARED_KEY_IDENTITY
                         add a preshared key (PSK) identity as a string
-  --CA_cert_path CA_CERT_PATH
+  --CA_cert_path CA_ROOT_CERT_PATH
                         path to a root Certificate Authority certificate
   --client_cert_path CLIENT_CERT_PATH
                         path to a client certificate
   --client_private_key_path CLIENT_PRIVATE_KEY_PATH
                         path to a client private key
+  --imei_only           only read the IMEI and exit without writing any
+                        credentials
 
 WARNING: nrf_cloud relies on credentials with sec_tag 16842753.
+```
+If only the IMEI is needed then no credentials have to be specified:
+```
+$ python3 cred.py --imei_only
+123456789012345
 ```
 A set of credentials that use the same sec_tag can be written to the SoC in a single step:
 ```
