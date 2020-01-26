@@ -177,7 +177,7 @@ def _add_and_parse_args():
                         help="path to a client private key")
     parser.add_argument("--imei_only", action='store_true',
                         help="only read the IMEI and exit without writing any credentials")
-    parser.add_argument("--program_app", type=str,
+    parser.add_argument("--program_app", type=str, metavar="PATH_TO_APP_HEX_FILE",
                         help="program specified hex file to device before finishing")
     args = parser.parse_args()
     if args.psk:
