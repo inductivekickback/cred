@@ -86,3 +86,5 @@ The Python program waits seven seconds after programming the hex file to allow i
 The prebuilt hex file can be modifed and compiled by moving this repo into the "ncs/nrf/samples/nrf9160/" directory and building it as usual.
 ### Limitations
 The ability to add credentials to a file and then read from that file to add additional credentials on the next invocation is half-baked because credentials are not parsed and verified.
+
+It may be necessary to recompile the hex file for custom PCBs. This hex file can be copied to the 'build' directory to replace the default one.
