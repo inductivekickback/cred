@@ -24,21 +24,20 @@ $ pip3 install --user -r requirements.txt
 The command line interface can be modified to add additional capabilties. The existing functionality is pretty comprehensive:
 ```
 $ python3 cred.py --help
-usage: cred [-h] [-i PATH_TO_IN_FILE] [-o PATH_TO_OUT_FILE]
-            [-d FW_EXECUTE_DELAY] [-s JLINK_SERIAL_NUMBER] [--sec_tag SEC_TAG]
-            [--psk PRESHARED_KEY] [--psk_ident PRESHARED_KEY_IDENTITY]
-            [--CA_cert_path CA_ROOT_CERT_PATH]
-            [--client_cert_path CLIENT_CERT_PATH]
-            [--client_private_key_path CLIENT_PRIVATE_KEY_PATH] [--imei_only]
-            [--program_app PATH_TO_APP_HEX_FILE]
+usage: cred [-h] [-i IN_FILE_PATH] [-o OUT_FILE_PATH] [-d FW_EXECUTE_DELAY]
+            [-s JLINK_SERIAL_NUMBER] [--sec_tag SEC_TAG] [--psk PRESHARED_KEY]
+            [--psk_ident PRESHARED_KEY_IDENTITY] [--CA_cert CA_ROOT_CERT_PATH]
+            [--client_cert CLIENT_CERT_PATH]
+            [--client_private_key CLIENT_PRIVATE_KEY_PATH] [--imei_only]
+            [--program_app APP_HEX_FILE_PATH]
 
 A command line interface for managing nRF91 credentials via SWD.
 
 optional arguments:
   -h, --help            show this help message and exit
-  -i PATH_TO_IN_FILE, --in_file PATH_TO_IN_FILE
+  -i IN_FILE_PATH, --in_file IN_FILE_PATH
                         read existing hex file instead of generating a new one
-  -o PATH_TO_OUT_FILE, --out_file PATH_TO_OUT_FILE
+  -o OUT_FILE_PATH, --out_file OUT_FILE_PATH
                         write output from read operation to file instead of
                         programming it
   -d FW_EXECUTE_DELAY, --fw_delay FW_EXECUTE_DELAY
@@ -49,19 +48,18 @@ optional arguments:
   --psk PRESHARED_KEY   add a preshared key (PSK) as a string
   --psk_ident PRESHARED_KEY_IDENTITY
                         add a preshared key (PSK) identity as a string
-  --CA_cert_path CA_ROOT_CERT_PATH
+  --CA_cert CA_ROOT_CERT_PATH
                         path to a root Certificate Authority certificate
-  --client_cert_path CLIENT_CERT_PATH
+  --client_cert CLIENT_CERT_PATH
                         path to a client certificate
-  --client_private_key_path CLIENT_PRIVATE_KEY_PATH
+  --client_private_key CLIENT_PRIVATE_KEY_PATH
                         path to a client private key
   --imei_only           only read the IMEI and exit without writing any
                         credentials
-  --program_app PATH_TO_APP_HEX_FILE
+  --program_app APP_HEX_FILE_PATH
                         program specified hex file to device before finishing
 
 WARNING: nrf_cloud relies on credentials with sec_tag 16842753.
-
 ```
 If only the IMEI is needed then no credentials have to be specified:
 ```
@@ -78,7 +76,7 @@ $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE
 If PEM or CRT files are required then they are specified by file path instead of pasted onto the command line. If more than one sec_tag is required then they can be added by writing the first hex file to a file and then using that file as an input on successive iterations. Here the second invocation adds to the hex file from the first and then writes to the SoC:
 ```
 $ python3 cred.py --sec_tag 1234 --psk_ident nrf-123456789012345 --psk CAFEBABE -o multi_cred.hex
-$ python3 cred.py --sec_tag 3456 -i multi_cred.hex --CA_cert_path ca_file.crt
+$ python3 cred.py --sec_tag 3456 -i multi_cred.hex --CA_cert ca_file.crt
 123456789012345
 ```
 The Python program waits seven seconds after programming the hex file to allow it to process the credentials and then write a result code to a fixed location in the nRF91's flash memory. This result code is then read to verify that hex file had time to complete its task. If the default delay is not long enough then a longer value can be specified via the **--fw_delay** argument.
