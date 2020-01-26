@@ -127,23 +127,23 @@ def _append_creds(intel_hex, args):
     if args.psk_ident:
         _append_cred(intel_hex, args.sec_tag, CRED_TYPE_PSK_IDENTITY, args.psk_ident)
         count = count + 1
-    if args.CA_cert_path:
+    if args.CA_cert:
         _append_cred(intel_hex,
                      args.sec_tag,
                      CRED_TYPE_ROOT_CA,
-                     _read_key_material_from_file(args.CA_cert_path))
+                     _read_key_material_from_file(args.CA_cert))
         count = count + 1
-    if args.client_cert_path:
+    if args.client_cert:
         _append_cred(intel_hex,
                      args.sec_tag,
                      CRED_TYPE_CLIENT_CERT,
-                     _read_key_material_from_file(args.client_cert_path))
+                     _read_key_material_from_file(args.client_cert))
         count = count + 1
-    if args.client_private_key_path:
+    if args.client_private_key:
         _append_cred(intel_hex,
                      args.sec_tag,
                      CRED_TYPE_CLIENT_PRIVATE_KEY,
-                     _read_key_material_from_file(args.client_private_key_path))
+                     _read_key_material_from_file(args.client_private_key))
         count = count + 1
     intel_hex.puts(CRED_COUNT_ADDR, struct.pack('B', count))
 
@@ -155,9 +155,9 @@ def _add_and_parse_args():
                                                   'managing nRF91 credentials via SWD.'),
                                      epilog=('WARNING: nrf_cloud relies on credentials '+
                                              'with sec_tag 16842753.'))
-    parser.add_argument("-i", "--in_file", type=str, metavar="PATH_TO_IN_FILE",
+    parser.add_argument("-i", "--in_file", type=str, metavar="IN_FILE_PATH",
                         help="read existing hex file instead of generating a new one")
-    parser.add_argument("-o", "--out_file", type=str, metavar="PATH_TO_OUT_FILE",
+    parser.add_argument("-o", "--out_file", type=str, metavar="OUT_FILE_PATH",
                         help="write output from read operation to file instead of programming it")
     parser.add_argument("-d", "--fw_delay", type=int, metavar="FW_EXECUTE_DELAY",
                         help="delay in seconds to allow firmware on nRF91 to execute")
@@ -169,15 +169,15 @@ def _add_and_parse_args():
                         help="add a preshared key (PSK) as a string")
     parser.add_argument("--psk_ident", type=str, metavar="PRESHARED_KEY_IDENTITY",
                         help="add a preshared key (PSK) identity as a string")
-    parser.add_argument("--CA_cert_path", type=str, metavar="CA_ROOT_CERT_PATH",
+    parser.add_argument("--CA_cert", type=str, metavar="CA_ROOT_CERT_PATH",
                         help="path to a root Certificate Authority certificate")
-    parser.add_argument("--client_cert_path", type=str, metavar="CLIENT_CERT_PATH",
+    parser.add_argument("--client_cert", type=str, metavar="CLIENT_CERT_PATH",
                         help="path to a client certificate")
-    parser.add_argument("--client_private_key_path", type=str, metavar="CLIENT_PRIVATE_KEY_PATH",
+    parser.add_argument("--client_private_key", type=str, metavar="CLIENT_PRIVATE_KEY_PATH",
                         help="path to a client private key")
     parser.add_argument("--imei_only", action='store_true',
                         help="only read the IMEI and exit without writing any credentials")
-    parser.add_argument("--program_app", type=str, metavar="PATH_TO_APP_HEX_FILE",
+    parser.add_argument("--program_app", type=str, metavar="APP_HEX_FILE_PATH",
                         help="program specified hex file to device before finishing")
     args = parser.parse_args()
     if args.psk:
@@ -187,8 +187,8 @@ def _add_and_parse_args():
         parser.print_usage()
         print("error: sec_tag is required")
         sys.exit(-1)
-    creds_present = (args.psk or args.psk_ident or args.CA_cert_path or
-                     args.client_cert_path or args.client_private_key_path)
+    creds_present = (args.psk or args.psk_ident or args.CA_cert or
+                     args.client_cert or args.client_private_key)
     if args.imei_only:
         if creds_present:
             parser.print_usage()
