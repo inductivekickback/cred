@@ -30,6 +30,7 @@ usage: cred [-h] [-i PATH_TO_IN_FILE] [-o PATH_TO_OUT_FILE]
             [--CA_cert_path CA_ROOT_CERT_PATH]
             [--client_cert_path CLIENT_CERT_PATH]
             [--client_private_key_path CLIENT_PRIVATE_KEY_PATH] [--imei_only]
+            [--program_app PATH_TO_APP_HEX_FILE]
 
 A command line interface for managing nRF91 credentials via SWD.
 
@@ -56,8 +57,11 @@ optional arguments:
                         path to a client private key
   --imei_only           only read the IMEI and exit without writing any
                         credentials
+  --program_app PATH_TO_APP_HEX_FILE
+                        program specified hex file to device before finishing
 
 WARNING: nrf_cloud relies on credentials with sec_tag 16842753.
+
 ```
 If only the IMEI is needed then no credentials have to be specified:
 ```
