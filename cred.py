@@ -57,9 +57,11 @@ CRED_TYPE_PSK_IDENTITY = 4
 
 def _write_firmware(nrfjprog_probe, fw_hex):
     """Program and verify a hex file."""
-    nrfjprog_probe.program(fw_hex)
-    nrfjprog_probe.verify(fw_hex)
-    nrfjprog_probe.reset()
+    program_options = HighLevel.ProgramOptions(
+        erase_action=HighLevel.EraseAction.ERASE_ALL,
+        reset=HighLevel.ResetAction.RESET_SYSTEM,
+        verify=HighLevel.VerifyAction.VERIFY_READ)
+    nrfjprog_probe.program(fw_hex, program_options)
 
 
 def _close_and_exit(nrfjprog_api, status):
@@ -175,6 +177,8 @@ def _add_and_parse_args():
                         help="path to a client private key")
     parser.add_argument("--imei_only", action='store_true',
                         help="only read the IMEI and exit without writing any credentials")
+    parser.add_argument("--program_app", type=str,
+                        help="program specified hex file to device before finishing")
     args = parser.parse_args()
     if args.psk:
         if args.psk.upper().startswith("0X"):
@@ -228,7 +232,7 @@ def _main():
         else:
             intel_hex.puts(CRED_PAGE_ADDR, MAGIC_NUMBER_BYTES)
             intel_hex.puts(CRED_COUNT_ADDR, struct.pack('B', 0x00))
-        if not args.out_file:
+        if not args.out_file or args.program_app:
             nrfjprog_api, nrfjprog_probe = _connect_to_jlink(args)
         _append_creds(intel_hex, args)
         if args.out_file:
@@ -252,6 +256,8 @@ def _main():
             nrfjprog_probe.erase(HighLevel.EraseAction.ERASE_ALL)
             os.remove(tmp_file)
             os.removedirs(os.path.dirname(tmp_file))
+        if args.program_app:
+            _write_firmware(nrfjprog_probe, args.program_app)
 
         _close_and_exit(nrfjprog_api, 0)
     except Exception as ex:
