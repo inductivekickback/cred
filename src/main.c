@@ -25,12 +25,11 @@
 
 #include <zephyr.h>
 #include <stdio.h>
-#include <uart.h>
 #include <string.h>
 
 #include <nrfx_nvmc.h>
 #include <at_cmd.h>
-#include "nrf_inbuilt_key.h"
+#include <modem_key_mgmt.h>
 
 
 #define CRED_PAGE_ADDR      0x2B000
@@ -122,13 +121,13 @@ static int parse_and_write_credential(u32_t * addr)
     nrf_sec_tag_t sec_tag = *(u32_t*)*addr;
     *addr += sizeof(nrf_sec_tag_t);
 
-    nrf_key_mgnt_cred_type_t cred_type = *(u8_t*)*addr;
-    *addr += sizeof(nrf_key_mgnt_cred_type_t);
+    enum modem_key_mgnt_cred_type cred_type = *(u8_t*)*addr;
+    *addr += sizeof(enum modem_key_mgnt_cred_type);
 
     u16_t len = *(u16_t*)*addr;
     *addr += sizeof(u16_t);
 
-    ret = nrf_inbuilt_key_write(sec_tag, cred_type, (u8_t*)*addr, len);
+    ret = modem_key_mgmt_write(sec_tag, cred_type, (u8_t*)*addr, len);
 
     *addr += len;
 
