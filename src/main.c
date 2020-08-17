@@ -28,8 +28,8 @@
 #include <string.h>
 
 #include <nrfx_nvmc.h>
-#include <at_cmd.h>
-#include <modem_key_mgmt.h>
+#include <modem/at_cmd.h>
+#include <modem/modem_key_mgmt.h>
 
 
 #define CRED_PAGE_ADDR      0x2B000
