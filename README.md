@@ -1,13 +1,13 @@
 Nordic's nRF91 series has a mechanism for storing [TLS credentials](https://infocenter.nordicsemi.com/index.jsp?topic=%2Fref_at_commands%2FREF%2Fat_commands%2Fmob_termination_ctrl_status%2Fcmng_set.html) securely on the "modem side" of the SoC. The purpose of this project is to provide a proof-of-concept process for writing these credentials efficiently -- using only the SWD interface and without invoking a compiler.
 ### About
-There are several reasons why compiling TLS credentials into production firmware is not a good idea:
+There are several reasons why compiling TLS credentials into production firmware is **not** a good idea:
 * The application must copy the credentials to the modem side of the SoC so they end up occupying space on both cores
   * Individual certificates can approach 4KB in length
   * This also means that the application has to contain extra code to perform the copying
 * Key material that is part of the application doesn't benefit from all of the extra security that is provided by the modem core
 * Compiling credentials into application hex files requires generating unique application hex files for every device 
 
-These disbenefits are fine during development but ideally a production server would require only the current version of the application firmware, credentials to use for the SoC, and an SWD interface for programming.
+These disadvantages are fine during development but ideally a production workstation would require only the current version of the application firmware, credentials to use for the SoC, and an SWD interface for programming.
 
 This project consists of two components:
 1. A prebuilt firmware hex file (compiled using the [nRF Connect SDK](http://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/index.html)) that is responsible for deactivating the modem, writing a list of credentials to the modem side, and writing the device's IMEI along with a result code to flash memory.
